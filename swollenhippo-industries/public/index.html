@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SwollenHippo Industries supports domestic manufacturers with rapid prototyping, additive and subtractive manufacturing, electronics, software, and industrial design.">
+  <title>SwollenHippo Industries | Rapid Prototyping Support</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="site-header">
+    <div class="container">
+      <p class="brand">SwollenHippo Industries</p>
+      <!-- Keep Help last in this navigation on future pages. -->
+      <nav aria-label="Primary">
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#mission">Our mission</a></li>
+          <li><a href="#why-us">Why us</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#help">Help</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main-content" class="container" tabindex="-1">
+    <section id="hero" aria-labelledby="hero-title">
+      <p class="eyebrow">Domestic prototyping partner</p>
+      <h1 id="hero-title">Rapid prototyping for modern manufacturers</h1>
+      <p class="lead">SwollenHippo Industries bridges the gap between hardware concept and domestic production. We combine additive, subtractive, electronic, and software engineering into one cohesive prototyping workflow.</p>
+      <div class="actions">
+        <a class="action-link" href="#contact">Get prototyping support</a>
+        <a href="#services">Explore capabilities</a>
+      </div>
+    </section>
+    <section id="mission" aria-labelledby="mission-title">
+      <h2 id="mission-title">Our mission</h2>
+      <p>Help US domestic manufacturers turn hardware concepts into functional prototypes and move confidently toward production. We bring physical parts, electronics, firmware, and industrial design together so teams can test ideas, refine designs, and prepare for manufacturing through a coordinated engineering workflow.</p>
+    </section>
+    <section id="services" aria-labelledby="services-title">
+      <h2 id="services-title">Capabilities &amp; services</h2>
+      <p>Multidisciplinary prototyping support for US domestic manufacturing teams.</p>
+      <div class="services-grid">
+        <article class="service">
+          <h3>Additive &amp; subtractive manufacturing</h3>
+          <p>FDM, SLA, and SLS 3D printing paired with multi-axis CNC milling for precise physical parts and functional assemblies.</p>
+        </article>
+        <article class="service">
+          <h3>Electronics &amp; PCB design</h3>
+          <p>Schematic capture, printed circuit board (PCB) layout, component sourcing, rapid assembly, and embedded hardware validation testing.</p>
+        </article>
+        <article class="service">
+          <h3>Software &amp; firmware development</h3>
+          <p>Microcontroller firmware in C and C++, hardware-to-cloud Internet of Things (IoT) connections, diagnostic interfaces, and control software.</p>
+        </article>
+        <article class="service">
+          <h3>Digital &amp; industrial design</h3>
+          <p>Design for manufacturability, ergonomic enclosure styling, computer-aided design (CAD) modeling, and user interaction design.</p>
+        </article>
+      </div>
+    </section>
+    <section id="why-us" aria-labelledby="why-title">
+      <h2 id="why-title">Why partner with SwollenHippo?</h2>
+      <h3>Domestic focus</h3>
+      <p>Prototyping and engineering support focused on domestic manufacturing teams, with close collaboration throughout development.</p>
+      <h3>Unified engineering workflow</h3>
+      <p>Coordinate enclosures, circuits, and code together, with a single point of contact across disciplines.</p>
+      <h3>Rapid iteration</h3>
+      <p>Move from initial CAD models toward a functional proof of concept through practical build, test, and refinement cycles.</p>
+    </section>
+    <section id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Request prototyping support</h2>
+      <p>Tell us about your project requirements, technical goals, and timeline.</p>
+      <p id="form-instructions">Fields marked “required” must be completed. This local demonstration checks your entries only; it does not submit a request, save information, or schedule a consultation.</p>
+      <noscript><p>JavaScript is required to check this demonstration form. The service information and help remain available.</p></noscript>
+      <form id="contact-form" aria-describedby="form-instructions">
+        <div id="error-summary" class="error-summary" tabindex="-1" aria-labelledby="error-summary-title" hidden>
+          <h3 id="error-summary-title">Check your entries</h3>
+          <ul id="error-list"></ul>
+        </div>
+        <div class="field">
+          <label for="name">Full name (required)</label>
+          <p id="name-hint" class="hint">Enter the name you want us to use.</p>
+          <input id="name" name="name" autocomplete="name" required maxlength="100" aria-describedby="name-hint name-error">
+          <p id="name-error" class="field-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="email">Work email (required)</label>
+          <p id="email-hint" class="hint">Use an address such as name@example.com.</p>
+          <input id="email" name="email" type="email" autocomplete="email" required maxlength="254" aria-describedby="email-hint email-error">
+          <p id="email-error" class="field-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="company">Company or organization (optional)</label>
+          <p id="company-hint" class="hint">Enter your company or manufacturing team name.</p>
+          <input id="company" name="company" autocomplete="organization" maxlength="150" aria-describedby="company-hint company-error">
+          <p id="company-error" class="field-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="service">Primary service needed (required)</label>
+          <p id="service-hint" class="hint">Choose one service, or select multidisciplinary support.</p>
+          <select id="service" name="service" required aria-describedby="service-hint service-error">
+            <option value="">Select a service</option>
+            <option value="manufacturing">Additive &amp; subtractive manufacturing</option>
+            <option value="electronics">Electronics &amp; PCB design</option>
+            <option value="software">Software &amp; firmware development</option>
+            <option value="design">Digital &amp; industrial design</option>
+            <option value="multidisciplinary">Full multidisciplinary support</option>
+          </select>
+          <p id="service-error" class="field-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="message">Project details (required)</label>
+          <p id="message-hint" class="hint">Describe your goals, timeframe, and technical requirements in up to 2,000 characters. Do not include sensitive or confidential information.</p>
+          <textarea id="message" name="message" rows="6" required maxlength="2000" aria-describedby="message-hint message-error"></textarea>
+          <p id="message-error" class="field-error" hidden></p>
+        </div>
+        <button id="submit-button" type="submit" disabled>Check demo request</button>
+      </form>
+      <p id="form-status" role="status" aria-atomic="true"></p>
+    </section>
+    <section id="help" aria-labelledby="help-title">
+      <h2 id="help-title">Help with your project inquiry</h2>
+      <p>Choose the service closest to your project. If your prototype combines hardware, electronics, and software, choose “Full multidisciplinary support.” Include your goals and timeline in the project details.</p>
+      <p>Select “Check demo request” to check the form. If an entry needs attention, follow its link in the error summary. Your entries remain available while you correct them.</p>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p class="brand">SwollenHippo Industries</p>
+      <p>Rapid prototyping support for domestic manufacturers.</p>
+      <p>Local demonstration. Project inquiries are not transmitted.</p>
+    </div>
+  </footer>
+</body>
+</html>
