@@ -2,6 +2,10 @@
 const express = require("express");
 const helmet = require("helmet");
 const path = require("node:path");
+const objDatabase = require("./models");
+const { getJwtConfig } = require("./api/config");
+const objAuthRouter = require("./api/routes/auth");
+const objJobsRouter = require("./api/routes/jobs");
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const production = process.env.NODE_ENV === "production";
@@ -20,6 +24,9 @@ app.use(helmet({
     upgradeInsecureRequests: production ? [] : null
   } }
 }));
+app.use(express.json({ limit: "16kb" }));
+app.use("/api/auth", objAuthRouter);
+app.use("/api/jobs", objJobsRouter);
 app.use(express.static(path.join(__dirname, "public"), { dotfiles: "deny" }));
 app.use((req, res) => res.status(404).type("text/plain").send("Page not found. Return to /."));
 app.use((error, req, res, next) => {
@@ -27,4 +34,17 @@ app.use((error, req, res, next) => {
   if (res.headersSent) return next(error);
   res.status(500).type("text/plain").send("An unexpected error occurred.");
 });
-app.listen(port, "127.0.0.1", () => console.log(`SwollenHippo Industries: http://127.0.0.1:${port}`));
+async function start() {
+  getJwtConfig();
+  await objDatabase.objSequelize.authenticate();
+  app.listen(port, "127.0.0.1", () => console.log(`SwollenHippo Industries: http://127.0.0.1:${port}`));
+}
+
+if (require.main === module) {
+  start().catch((error) => {
+    console.error("Failed to connect to MariaDB or start the server:", error);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = app;

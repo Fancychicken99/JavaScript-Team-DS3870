@@ -1,81 +1,49 @@
-<<<<<<< Updated upstream
-# SwollenHippo Industries API
+# SwollenHippo Industries JavaScript API
 
-## Create and install (from the `swollenhippo-industries` directory)
+The API is part of the existing Node.js/Express application and uses Sequelize with MariaDB. Run commands from `swollenhippo-industries`.
 
-```sh
-dotnet new webapi --name SwollenHippo.Api --framework net8.0 --use-controllers
-cd SwollenHippo.Api
-dotnet add package Pomelo.EntityFrameworkCore.MySql --version 8.0.3
-dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 8.0.31
-dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.22
-dotnet tool install --global dotnet-ef --version 8.0.22
-```
+## Configure the local environment
 
-The checked-in scaffold already contains these project/package references. Install the .NET 8 SDK first if `dotnet` is unavailable.
-
-## Local configuration
-
-Use user secrets for local development instead of committing database credentials or the JWT signing key:
-
-```sh
-dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:SwollenHippo" "Server=localhost;Port=3306;Database=swollenhippo;User=YOUR_DB_USER;Password=YOUR_DB_PASSWORD;"
-dotnet user-secrets set "Jwt:Issuer" "SwollenHippo.Api"
-dotnet user-secrets set "Jwt:Audience" "SwollenHippo.Client"
-dotnet user-secrets set "Jwt:SigningKey" "replace-with-a-random-secret-at-least-32-bytes-long"
-dotnet run
-```
-
-The API scaffold enables JWT bearer validation and authorization middleware. Login/token issuance and API controllers are intentionally left for the next implementation step. Create/apply schema migrations after configuring MariaDB, using `dotnet ef migrations add InitialCreate` and `dotnet ef database update`.
-=======
-# SwollenHippo Industries .NET 8 API
-
-## Requirements
-
-- .NET 8 SDK
-- MariaDB
-
-## Configure local secrets
-
-Run commands from this directory. User secrets are kept outside the repository and are loaded by ASP.NET Core in the Development environment.
+In PowerShell, set the MariaDB connection URL, a random JWT secret, issuer, and audience:
 
 ```powershell
-dotnet user-secrets set "ConnectionStrings:MariaDb" "Server=localhost;Port=3306;Database=swollenhippo;User=YOUR_DB_USER;Password=YOUR_DB_PASSWORD;"
-dotnet user-secrets set "Jwt:Issuer" "SwollenHippo.Api"
-dotnet user-secrets set "Jwt:Audience" "SwollenHippo.Client"
+$env:MARIADB_URL = "mariadb://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:3306/swollenhippo"
 $keyBytes = New-Object byte[] 64
 $rng = [Security.Cryptography.RandomNumberGenerator]::Create()
 $rng.GetBytes($keyBytes)
-$jwtKey = [Convert]::ToBase64String($keyBytes)
-dotnet user-secrets set "Jwt:Key" $jwtKey
+$env:JWT_SECRET = [Convert]::ToBase64String($keyBytes)
 $rng.Dispose()
+$env:JWT_ISSUER = "SwollenHippo.Api"
+$env:JWT_AUDIENCE = "SwollenHippo.Client"
 ```
 
-Replace the database credentials with real local values. The JWT key is generated as a random 64-byte value for HMAC-SHA512. Never commit credentials or the signing key.
+Keep these values private. Set them again in each new terminal, or store them in a local `.env` file using a locally installed environment-variable loader; never commit secrets.
 
-## Create the database schema and run
+## Install and initialize
 
 ```powershell
-dotnet tool install --global dotnet-ef --version 8.0.22
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-dotnet run
+npm install
+npm run db:sync
+npm start
 ```
 
-## Authentication endpoints
+`db:sync` creates missing tables from the Sequelize models and does not force-drop existing tables. For deployed databases, use a reviewed migration process instead.
 
-- `POST /api/auth/register` accepts `{"username":"...","password":"..."}`. New accounts are always assigned the `Customer` role.
-- `POST /api/auth/login` accepts the same fields and returns a bearer access token valid for two hours.
+## Authentication
 
-Send the returned token in the `Authorization: Bearer <token>` header to call authorized endpoints. There is intentionally no public admin registration. To bootstrap an administrator, register the intended account and promote it through a trusted MariaDB administrator connection:
+- `POST /api/auth/register` accepts `{"username":"...","password":"..."}`. Passwords must be at least 12 characters and no more than 72 UTF-8 bytes. Registration only creates `Customer` users.
+- `POST /api/auth/login` accepts the same fields and returns an HS512 bearer token valid for two hours.
+- Include the token in the `Authorization: Bearer <token>` header for protected routes.
+
+There is no public Admin registration. To promote a registered account, use a trusted MariaDB administrator account:
 
 ```sql
 UPDATE Users SET Role = 'Admin' WHERE Username = 'your-admin-username';
 ```
 
-## Job endpoints
+Log in again after promotion so the new token carries the Admin role.
 
-- `GET /api/jobs/my-jobs` lists the authenticated customer's assigned jobs.
-- `PATCH /api/jobs/{id}/status` updates a job status and requires an Admin token. The JSON body must use one of `Pending`, `InProgress`, `Complete`, or `Shipped`.
->>>>>>> Stashed changes
+## Job routes
+
+- `GET /api/jobs/my-jobs` lists jobs assigned to the authenticated Customer.
+- `PATCH /api/jobs/{id}/status` updates a job status and requires an Admin token. Its JSON body must contain one of `Pending`, `InProgress`, `Complete`, or `Shipped`.

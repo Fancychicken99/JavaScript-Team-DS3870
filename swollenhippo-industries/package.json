@@ -7,12 +7,16 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "check": "node --check server.js && node --check public/js/main.js"
+    "check": "node --check server.js && node --check public/js/main.js && node --check api/config.js && node --check api/middleware/authenticate.js && node --check api/middleware/requireRole.js && node --check api/routes/auth.js && node --check api/routes/jobs.js && node --check scripts/sync-database.js",
+    "test": "node --test api/tests/*.test.js",
+    "db:sync": "node scripts/sync-database.js"
   },
   "engines": { "node": ">=22" },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.4.5",
     "sequelize": "^6.37.7"
   }
