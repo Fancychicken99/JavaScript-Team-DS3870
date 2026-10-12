@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SwollenHippo.Api.Data;
+<<<<<<< Updated upstream
+=======
+using SwollenHippo.Api.Dtos;
+>>>>>>> Stashed changes
 using SwollenHippo.Api.Models;
 
 namespace SwollenHippo.Api.Controllers;
@@ -11,10 +15,17 @@ namespace SwollenHippo.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
+<<<<<<< Updated upstream
 public sealed class JobsController(SwollenHippoDbContext objDbContext) : ControllerBase
 {
     [HttpGet("my-jobs")]
     [Authorize(Roles = "Customer")]
+=======
+public sealed class JobsController(AppDbContext objDbContext) : ControllerBase
+{
+    [HttpGet("my-jobs")]
+    [Authorize(Roles = nameof(UserRole.Customer))]
+>>>>>>> Stashed changes
     public async Task<ActionResult<IReadOnlyList<Job>>> GetMyJobs(CancellationToken objCancellationToken)
     {
         string? strUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -32,7 +43,11 @@ public sealed class JobsController(SwollenHippoDbContext objDbContext) : Control
     }
 
     [HttpPatch("{id:int}/status")]
+<<<<<<< Updated upstream
     [Authorize(Roles = "Admin")]
+=======
+    [Authorize(Roles = nameof(UserRole.Admin))]
+>>>>>>> Stashed changes
     public async Task<ActionResult<Job>> UpdateJobStatus(
         int id,
         [FromBody] UpdateJobStatusDto objUpdateJobStatusDto,

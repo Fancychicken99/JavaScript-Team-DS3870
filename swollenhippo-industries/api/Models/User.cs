@@ -12,6 +12,9 @@ public sealed class User
 public enum UserRole
 {
     Customer,
+<<<<<<< Updated upstream
     Employee,
+=======
+>>>>>>> Stashed changes
     Admin
 }
