@@ -1,30 +1,17 @@
 "use strict";
-
 const objJwt = require("jsonwebtoken");
-const { getJwtConfig } = require("../config");
-
-function authenticate(req, res, next) {
-  const strAuthorization = req.get("authorization") || "";
-  const arrAuthorizationParts = strAuthorization.split(" ");
-  if (arrAuthorizationParts.length !== 2 || arrAuthorizationParts[0] !== "Bearer") {
-    return res.status(401).json({ message: "Authentication required." });
-  }
-
-  const { strJwtSecret, strJwtIssuer, strJwtAudience } = getJwtConfig();
+const { getJwtConfig: fnGetJwtConfig } = require("../config");
+module.exports = function fnAuthenticate(objRequest, objResponse, fnNext) {
+  const arrParts = (objRequest.get("authorization") || "").split(" ");
+  if (arrParts.length !== 2 || arrParts[0] !== "Bearer") return objResponse.status(401).json({ message: "Please sign in." });
+  const { strJwtSecret, strJwtIssuer, strJwtAudience } = fnGetJwtConfig();
   try {
-    req.objAuthenticatedUser = objJwt.verify(arrAuthorizationParts[1], strJwtSecret, {
-      algorithms: ["HS512"],
-      issuer: strJwtIssuer,
-      audience: strJwtAudience
-    });
-  } catch (error) {
-    if (error instanceof objJwt.JsonWebTokenError || error instanceof objJwt.TokenExpiredError) {
-      return res.status(401).json({ message: "Invalid or expired token." });
-    }
-    return next(error);
+    const objClaims = objJwt.verify(arrParts[1], strJwtSecret, { algorithms: ["HS512"], issuer: strJwtIssuer, audience: strJwtAudience });
+    if (!Number.isSafeInteger(Number(objClaims.sub)) || Number(objClaims.sub) < 1) throw new objJwt.JsonWebTokenError("Invalid identity");
+    objRequest.objAuthenticatedUser = objClaims;
+  } catch (objError) {
+    if (objError instanceof objJwt.JsonWebTokenError) return objResponse.status(401).json({ message: "Your session is invalid or expired. Please sign in again." });
+    return fnNext(objError);
   }
-
-  return next();
-}
-
-module.exports = authenticate;
+  return fnNext();
+};

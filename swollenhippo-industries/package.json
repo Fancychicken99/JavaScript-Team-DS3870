@@ -5,19 +5,37 @@
   "description": "Accessible domestic rapid-prototyping services website",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
-    "check": "node --check server.js && node --check public/js/main.js && node --check api/config.js && node --check api/middleware/authenticate.js && node --check api/middleware/requireRole.js && node --check api/routes/auth.js && node --check api/routes/jobs.js && node --check scripts/sync-database.js",
-    "test": "node --test api/tests/*.test.js",
-    "db:sync": "node scripts/sync-database.js"
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js",
+    "check": "node scripts/check.js",
+    "test": "mocha api/tests/**/*.test.js",
+    "db:sync": "node --env-file-if-exists=.env scripts/sync-database.js",
+    "admin:create": "node --env-file-if-exists=.env scripts/create-admin.js",
+    "test:browser": "node scripts/test-browser.js",
+    "test:database": "node --env-file-if-exists=.env scripts/test-database.js"
   },
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.4.5",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "bootstrap": "^5.3.8",
+    "express-rate-limit": "^8.2.1"
+  },
+  "devDependencies": {
+    "mocha": "^12.0.3",
+    "supertest": "^7.2.2",
+    "@playwright/test": "^1.56.1",
+    "@axe-core/playwright": "^4.11.0"
+  },
+  "overrides": {
+    "sequelize": {
+      "uuid": "^11.1.1"
+    }
   }
 }

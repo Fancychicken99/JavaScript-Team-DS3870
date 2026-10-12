@@ -5,14 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="SwollenHippo Industries supports domestic manufacturers with rapid prototyping, additive and subtractive manufacturing, electronics, software, and industrial design.">
   <title>SwollenHippo Industries | Rapid Prototyping Support</title>
+  <link rel="icon" type="image/png" href="/Swollenhippo_logo.png">
+  <link rel="stylesheet" href="/vendor/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/session.js" defer></script>
   <script src="/js/main.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <header class="site-header">
     <div class="container">
-      <p class="brand">SwollenHippo Industries</p>
+      <a class="brand" href="/"><img src="/Swollenhippo_logo.png" width="72" height="72" alt="">SwollenHippo Industries</a>
       <!-- Keep Help last in this navigation on future pages. -->
       <nav aria-label="Primary">
         <ul>
@@ -21,6 +24,7 @@
           <li><a href="#mission">Our mission</a></li>
           <li><a href="#why-us">Why us</a></li>
           <li><a href="#contact">Contact</a></li>
+          <li><a href="/dashboard.html">Account and job dashboard</a></li>
           <li><a href="#help">Help</a></li>
         </ul>
       </nav>
@@ -43,20 +47,20 @@
     <section id="services" aria-labelledby="services-title">
       <h2 id="services-title">Capabilities &amp; services</h2>
       <p>Multidisciplinary prototyping support for US domestic manufacturing teams.</p>
-      <div class="services-grid">
-        <article class="service">
+      <div class="row g-4">
+        <article class="service col-12 col-md-6">
           <h3>Additive &amp; subtractive manufacturing</h3>
           <p>FDM, SLA, and SLS 3D printing paired with multi-axis CNC milling for precise physical parts and functional assemblies.</p>
         </article>
-        <article class="service">
+        <article class="service col-12 col-md-6">
           <h3>Electronics &amp; PCB design</h3>
           <p>Schematic capture, printed circuit board (PCB) layout, component sourcing, rapid assembly, and embedded hardware validation testing.</p>
         </article>
-        <article class="service">
+        <article class="service col-12 col-md-6">
           <h3>Software &amp; firmware development</h3>
           <p>Microcontroller firmware in C and C++, hardware-to-cloud Internet of Things (IoT) connections, diagnostic interfaces, and control software.</p>
         </article>
-        <article class="service">
+        <article class="service col-12 col-md-6">
           <h3>Digital &amp; industrial design</h3>
           <p>Design for manufacturability, ergonomic enclosure styling, computer-aided design (CAD) modeling, and user interaction design.</p>
         </article>
@@ -74,8 +78,9 @@
     <section id="contact" aria-labelledby="contact-title">
       <h2 id="contact-title">Request prototyping support</h2>
       <p>Tell us about your project requirements, technical goals, and timeline.</p>
-      <p id="form-instructions">Fields marked “required” must be completed. This local demonstration checks your entries only; it does not submit a request, save information, or schedule a consultation.</p>
-      <noscript><p>JavaScript is required to check this demonstration form. The service information and help remain available.</p></noscript>
+      <p id="form-instructions">Fields marked “required” must be completed. Sign in before submitting so your inquiry is saved to your account. Expected completion dates are set after review.</p>
+      <p><a href="/dashboard.html">Sign in or create an account</a> before sending your inquiry. Your draft will be restored when you return.</p>
+      <noscript><p>JavaScript is required to submit an inquiry. Service information and help remain available.</p></noscript>
       <form id="contact-form" aria-describedby="form-instructions">
         <div id="error-summary" class="error-summary" tabindex="-1" aria-labelledby="error-summary-title" hidden>
           <h3 id="error-summary-title">Check your entries</h3>
@@ -118,21 +123,21 @@
           <textarea id="message" name="message" rows="6" required maxlength="2000" aria-describedby="message-hint message-error"></textarea>
           <p id="message-error" class="field-error" hidden></p>
         </div>
-        <button id="submit-button" type="submit" disabled>Check demo request</button>
+        <button id="submit-button" type="submit" disabled>Send inquiry</button>
       </form>
-      <p id="form-status" role="status" aria-atomic="true"></p>
+      <p id="form-status" role="status" aria-atomic="true" tabindex="-1"></p>
     </section>
     <section id="help" aria-labelledby="help-title">
       <h2 id="help-title">Help with your project inquiry</h2>
       <p>Choose the service closest to your project. If your prototype combines hardware, electronics, and software, choose “Full multidisciplinary support.” Include your goals and timeline in the project details.</p>
-      <p>Select “Check demo request” to check the form. If an entry needs attention, follow its link in the error summary. Your entries remain available while you correct them.</p>
+      <p>Select “Send inquiry” to save your request. If an entry needs attention, follow its link in the error summary. View your saved requests and their progress on the job dashboard.</p>
     </section>
   </main>
   <footer class="site-footer">
     <div class="container">
       <p class="brand">SwollenHippo Industries</p>
       <p>Rapid prototyping support for domestic manufacturers.</p>
-      <p>Local demonstration. Project inquiries are not transmitted.</p>
+      <p>Customer inquiries and project progress in one place.</p>
     </div>
   </footer>
 </body>

@@ -1,18 +1,17 @@
 "use strict";
-
-const { objSequelize } = require("../models");
-
-async function syncDatabase() {
+// Additive, repeatable upgrade: never sync with force or alter against existing data.
+async function fnMigrate(objDatabase) {
+  const objSequelize = objDatabase.objSequelize;
   try {
     await objSequelize.authenticate();
     await objSequelize.sync();
-    console.log("MariaDB schema is ready.");
-  } catch (error) {
-    console.error("Failed to initialize the MariaDB schema:", error);
-    process.exitCode = 1;
-  } finally {
-    await objSequelize.close();
-  }
+    const objQuery = objSequelize.getQueryInterface();
+    const objColumns = await objQuery.describeTable("Jobs");
+    for (const strName of ["strCustomerName", "strEmail", "strCompany", "strService", "strDetails", "dteExpectedCompletion"]) {
+      if (!objColumns[strName]) await objQuery.addColumn("Jobs", strName, objDatabase.Job.rawAttributes[strName]);
+    }
+    console.log("MariaDB schema is ready; existing records were preserved.");
+  } finally { await objSequelize.close(); }
 }
-
-syncDatabase();
+module.exports = { fnMigrate };
+if (require.main === module) fnMigrate(require("../models")).catch((objError) => { console.error("Migration failed:", objError.message); process.exitCode = 1; });

@@ -1,49 +1,40 @@
-# SwollenHippo Industries JavaScript API
+# SwollenHippo Express API
 
-The API is part of the existing Node.js/Express application and uses Sequelize with MariaDB. Run commands from `swollenhippo-industries`.
+Run all commands from the swollenhippo-industries directory. See the root README for setup, MariaDB connection, administrator creation, and validation.
 
-## Configure the local environment
+All request/response bodies are JSON. Authenticated endpoints require Authorization: Bearer <accessToken>. Tokens expire after two hours. Responses are not cached.
 
-In PowerShell, set the MariaDB connection URL, a random JWT secret, issuer, and audience:
+| Method | Path | Access | Behavior |
+| --- | --- | --- | --- |
+| POST | /api/auth/register | Public, rate limited | username and password; creates a Customer only |
+| POST | /api/auth/login | Public, rate limited | username and password; returns accessToken and user |
+| POST | /api/jobs | Customer | Persists a pending inquiry owned by the signed-in customer |
+| GET | /api/jobs?offset=0 | Authenticated | Customer's own jobs, or all jobs for an administrator; 50 per page |
+| GET | /api/jobs/my-jobs | Authenticated | Compatibility alias for the job listing |
+| PATCH | /api/jobs/:id/status | Admin only | Updates strStatus and optionally dteExpectedCompletion |
 
-```powershell
-$env:MARIADB_URL = "mariadb://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:3306/swollenhippo"
-$keyBytes = New-Object byte[] 64
-$rng = [Security.Cryptography.RandomNumberGenerator]::Create()
-$rng.GetBytes($keyBytes)
-$env:JWT_SECRET = [Convert]::ToBase64String($keyBytes)
-$rng.Dispose()
-$env:JWT_ISSUER = "SwollenHippo.Api"
-$env:JWT_AUDIENCE = "SwollenHippo.Client"
-```
+Inquiry body:
 
-Keep these values private. Set them again in each new terminal, or store them in a local `.env` file using a locally installed environment-variable loader; never commit secrets.
+~~~json
+{
+  "strCustomerName": "Customer Name",
+  "strEmail": "customer@example.com",
+  "strCompany": "Optional company",
+  "strService": "design",
+  "strDetails": "Build a prototype enclosure."
+}
+~~~
 
-## Install and initialize
+Services: manufacturing, electronics, software, design, multidisciplinary. Names are limited to 100 characters, email to 254, company to 150, and project details to 2000. The authenticated user determines ownership. Status and expected completion cannot be supplied by customers.
 
-```powershell
-npm install
-npm run db:sync
-npm start
-```
+Administrator update body:
 
-`db:sync` creates missing tables from the Sequelize models and does not force-drop existing tables. For deployed databases, use a reviewed migration process instead.
+~~~json
+{"strStatus":"InProgress","dteExpectedCompletion":"2026-10-20"}
+~~~
 
-## Authentication
+Statuses: Pending, InProgress, Complete, Shipped. A null completion date means To be scheduled. Omit the date to retain the current value. Impossible calendar dates are rejected.
 
-- `POST /api/auth/register` accepts `{"username":"...","password":"..."}`. Passwords must be at least 12 characters and no more than 72 UTF-8 bytes. Registration only creates `Customer` users.
-- `POST /api/auth/login` accepts the same fields and returns an HS512 bearer token valid for two hours.
-- Include the token in the `Authorization: Bearer <token>` header for protected routes.
+400 means invalid input, 401 means authentication required/expired, 403 means unauthorized role, 404 means missing resource, 409 means duplicate username, 413 means an oversized body, and 429 means rate limited. Database failures return a generic 500 and never a success message.
 
-There is no public Admin registration. To promote a registered account, use a trusted MariaDB administrator account:
-
-```sql
-UPDATE Users SET Role = 'Admin' WHERE Username = 'your-admin-username';
-```
-
-Log in again after promotion so the new token carries the Admin role.
-
-## Job routes
-
-- `GET /api/jobs/my-jobs` lists jobs assigned to the authenticated Customer.
-- `PATCH /api/jobs/{id}/status` updates a job status and requires an Admin token. Its JSON body must contain one of `Pending`, `InProgress`, `Complete`, or `Shipped`.
+The database is queried on every protected request to enforce current account existence and role. Password hashes and user records are never included in job responses. Database operations use Sequelize parameterization over the MariaDB driver.

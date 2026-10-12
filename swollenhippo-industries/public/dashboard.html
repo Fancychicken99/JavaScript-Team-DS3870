@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job dashboard | SwollenHippo Industries</title>
+  <link rel="icon" type="image/png" href="/Swollenhippo_logo.png">
+  <link rel="stylesheet" href="/vendor/bootstrap.min.css"><link rel="stylesheet" href="/css/style.css">
+  <script src="/js/session.js" defer></script><script src="/js/dashboard.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header class="site-header"><div class="container">
+  <a class="brand" href="/"><img src="/Swollenhippo_logo.png" width="72" height="72" alt="">SwollenHippo Industries</a>
+  <nav aria-label="Primary"><ul><li><a href="/">Home and inquiries</a></li><li><a href="/dashboard.html" aria-current="page">Job dashboard</a></li></ul></nav>
+</div></header>
+<main id="main-content" class="container" tabindex="-1">
+<h1 id="dashboard-title">Your job dashboard</h1>
+<p>Follow your projects from inquiry to shipment. Completion dates appear after your project has been reviewed.</p>
+<noscript><p>JavaScript is required to sign in and manage your jobs.</p></noscript>
+<p id="account-status" role="status" tabindex="-1"></p>
+<section id="account-panel" aria-labelledby="account-title">
+<h2 id="account-title">Sign in or create a customer account</h2>
+<p>Use the same account each time to see your inquiries. Administrators sign in here too.</p>
+<form id="account-form" aria-describedby="account-hint">
+<p id="account-hint">All fields are required. For new accounts, use 3–100 characters for your username and at least 12 characters for your password (maximum 72 UTF-8 bytes).</p>
+<div class="field"><label for="username">Username</label><input class="form-control" id="username" name="username" autocomplete="username" required minlength="3" maxlength="100"></div>
+<div class="field"><label for="password">Password</label><input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required maxlength="72" aria-describedby="account-hint"></div>
+<div class="actions"><button type="submit" name="action" value="login">Sign in</button><button type="submit" name="action" value="register">Create customer account</button></div>
+</form>
+</section>
+<section id="jobs-panel" aria-labelledby="jobs-title" hidden>
+<div class="actions"><h2 id="jobs-title">Your jobs</h2><button id="logout" type="button">Sign out</button><button id="refresh" type="button">Refresh jobs</button><a id="new-inquiry" href="/#contact">Submit an inquiry</a></div>
+<p id="jobs-status" role="status" tabindex="-1"></p>
+<div id="job-list" class="row g-4"></div>
+<nav aria-label="Job pages" class="actions"><button id="previous" type="button">Previous page</button><p id="page-label"></p><button id="next" type="button">Next page</button></nav>
+</section>
+</main>
+<footer class="site-footer"><div class="container"><p>SwollenHippo Industries · Domestic rapid prototyping</p></div></footer>
+</body></html>

@@ -1,94 +1,41 @@
 "use strict";
-
-const express = require("express");
+const objExpress = require("express");
 const objBcrypt = require("bcryptjs");
 const objJwt = require("jsonwebtoken");
-const { UniqueConstraintError } = require("sequelize");
-const { getJwtConfig } = require("../config");
-const { User, UserRole } = require("../../models");
-
-const objRouter = express.Router();
-const intMinimumPasswordLength = 12;
-const intMaximumPasswordBytes = 72;
-const intBcryptRounds = 12;
-
-objRouter.post("/register", async (req, res, next) => {
-  const { username, password } = req.body || {};
-  if (typeof username !== "string" || typeof password !== "string") {
-    return res.status(400).json({ message: "Username and password are required." });
-  }
-
-  const strUsername = username.trim();
-  if (strUsername.length < 3 || strUsername.length > 100) {
-    return res.status(400).json({ message: "Username must be between 3 and 100 characters." });
-  }
-  if (password.length < intMinimumPasswordLength ||
-      Buffer.byteLength(password, "utf8") > intMaximumPasswordBytes) {
-    return res.status(400).json({
-      message: "Password must be at least 12 characters and no more than 72 UTF-8 bytes."
-    });
-  }
-
-  try {
-    const objUser = await User.create({
-      Username: strUsername,
-      PasswordHash: await objBcrypt.hash(password, intBcryptRounds),
-      Role: UserRole.Customer
-    });
-
-    return res.status(201).json({
-      message: "Account registered.",
-      user: {
-        id: objUser.Id,
-        username: objUser.Username,
-        role: objUser.Role
-      }
-    });
-  } catch (error) {
-    if (error instanceof UniqueConstraintError) {
-      return res.status(400).json({ message: "That username is already registered." });
+const { UniqueConstraintError: clsUniqueConstraintError } = require("sequelize");
+const { getJwtConfig: fnGetJwtConfig } = require("../config");
+const strDummyHash = objBcrypt.hashSync("unused-dummy-password", 12);
+module.exports = (objDatabase) => {
+  const objRouter = objExpress.Router();
+  objRouter.post("/register", async (objRequest, objResponse) => {
+    const { username: strInputUsername, password: strPassword } = objRequest.body || {};
+    const strUsername = typeof strInputUsername === "string" ? strInputUsername.trim() : "";
+    if (strUsername.length < 3 || strUsername.length > 100 || typeof strPassword !== "string" ||
+      strPassword.length < 12 || Buffer.byteLength(strPassword, "utf8") > 72) {
+      return objResponse.status(400).json({ message: "Use a username of 3–100 characters and a password of at least 12 characters (maximum 72 UTF-8 bytes)." });
     }
-    return next(error);
-  }
-});
-
-objRouter.post("/login", async (req, res, next) => {
-  const { username, password } = req.body || {};
-  if (typeof username !== "string" || typeof password !== "string") {
-    return res.status(400).json({ message: "Username and password are required." });
-  }
-
-  try {
-    const objUser = await User.findOne({ where: { Username: username.trim() } });
-    const blnPasswordTooLong = Buffer.byteLength(password, "utf8") > intMaximumPasswordBytes;
-    if (!objUser || blnPasswordTooLong || !(await objBcrypt.compare(password, objUser.PasswordHash))) {
-      return res.status(401).json({ message: "Invalid credentials." });
+    try {
+      const objUser = await objDatabase.User.create({ Username: strUsername,
+        PasswordHash: await objBcrypt.hash(strPassword, 12), Role: objDatabase.UserRole.Customer });
+      return objResponse.status(201).json({ message: "Account created. Please sign in.", user: { id: objUser.Id, username: objUser.Username, role: objUser.Role } });
+    } catch (objError) {
+      if (objError instanceof clsUniqueConstraintError) return objResponse.status(409).json({ message: "That username is unavailable." });
+      throw objError;
     }
-
-    const { strJwtSecret, strJwtIssuer, strJwtAudience } = getJwtConfig();
-    const strAccessToken = objJwt.sign(
-      {
-        username: objUser.Username,
-        role: objUser.Role
-      },
-      strJwtSecret,
-      {
-        algorithm: "HS512",
-        subject: String(objUser.Id),
-        issuer: strJwtIssuer,
-        audience: strJwtAudience,
-        expiresIn: "2h"
-      }
-    );
-
-    return res.status(200).json({
-      accessToken: strAccessToken,
-      tokenType: "Bearer",
-      expiresIn: 7200
-    });
-  } catch (error) {
-    return next(error);
-  }
-});
-
-module.exports = objRouter;
+  });
+  objRouter.post("/login", async (objRequest, objResponse) => {
+    const { username: strUsername, password: strPassword } = objRequest.body || {};
+    if (typeof strUsername !== "string" || typeof strPassword !== "string" || strUsername.length > 100 || Buffer.byteLength(strPassword, "utf8") > 72) {
+      return objResponse.status(400).json({ message: "Provide a valid username and password." });
+    }
+    const objUser = await objDatabase.User.findOne({ where: { Username: strUsername.trim() } });
+    const blnMatches = await objBcrypt.compare(strPassword, objUser ? objUser.PasswordHash : strDummyHash);
+    if (!objUser || !blnMatches) return objResponse.status(401).json({ message: "Invalid credentials." });
+    const { strJwtSecret, strJwtIssuer, strJwtAudience } = fnGetJwtConfig();
+    const strToken = objJwt.sign({ username: objUser.Username, role: objUser.Role }, strJwtSecret,
+      { algorithm: "HS512", subject: String(objUser.Id), issuer: strJwtIssuer, audience: strJwtAudience, expiresIn: "2h" });
+    return objResponse.json({ accessToken: strToken, tokenType: "Bearer", expiresIn: 7200,
+      user: { username: objUser.Username, role: objUser.Role } });
+  });
+  return objRouter;
+};

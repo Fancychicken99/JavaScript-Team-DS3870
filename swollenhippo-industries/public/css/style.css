@@ -63,3 +63,22 @@ button:disabled { color: var(--muted); background: var(--surface); border-color:
   :focus { outline: 3px solid Highlight; box-shadow: none; }
   [aria-invalid="true"], .error-summary { border-color: CanvasText; }
 }
+
+/* Bootstrap layout with the team's earth-tone visual system. */
+body { font-family: inherit; line-height: 1.6; color: var(--ink); background: var(--paper); }
+a, a:visited { color: var(--olive); }
+.action-link, .action-link:visited { color: var(--paper); }
+.brand { gap: .75rem; text-decoration: none; flex-wrap: wrap; }
+.brand img { object-fit: contain; }
+.form-control, .form-control:focus { color: var(--ink); background: var(--paper); border: 2px solid var(--border); box-shadow: none; }
+.form-control:focus, :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.job-card { padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: .25rem; overflow-wrap: anywhere; }
+.job-card h3 { font-size: 1.3rem; }
+.job-card label, .job-card button { margin-block-start: .75rem; }
+.job-details { white-space: pre-wrap; }
+.job-status { font-weight: 700; }
+.actions p { margin: 0; }
+.service { background: transparent; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
+nav[aria-label="Job pages"] { margin-block-start: 1.5rem; }

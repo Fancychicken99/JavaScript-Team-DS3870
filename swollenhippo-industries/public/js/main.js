@@ -1,67 +1,55 @@
 "use strict";
-
-const form = document.querySelector("#contact-form");
-const summary = document.querySelector("#error-summary");
-const errorList = document.querySelector("#error-list");
-const status = document.querySelector("#form-status");
-const fields = [
-  { id: "name", label: "Full name", missing: "Enter your full name." },
-  { id: "email", label: "Work email", missing: "Enter your work email." },
-  { id: "company", label: "Company or organization" },
-  { id: "service", label: "Primary service needed", missing: "Choose a service." },
-  { id: "message", label: "Project details", missing: "Describe your project goals, timeframe, or requirements." }
+const objForm = document.querySelector("#contact-form");
+const objSummary = document.querySelector("#error-summary");
+const objErrorList = document.querySelector("#error-list");
+const objStatus = document.querySelector("#form-status");
+const objButton = document.querySelector("#submit-button");
+const arrFields = [
+  { strId: "name", strLabel: "Full name" }, { strId: "email", strLabel: "Work email" },
+  { strId: "company", strLabel: "Company or organization" }, { strId: "service", strLabel: "Primary service needed" },
+  { strId: "message", strLabel: "Project details" }
 ];
-
-form.addEventListener("submit", (event) => {
-  // Local demo only: prevent navigation and never transmit entered data.
-  event.preventDefault();
-  summary.hidden = true;
-  errorList.replaceChildren();
-  status.textContent = "";
-  let errorCount = 0;
-
-  for (const field of fields) {
-    const input = document.getElementById(field.id);
-    const error = document.getElementById(`${field.id}-error`);
-    input.removeAttribute("aria-invalid");
-    error.hidden = true;
-    error.textContent = "";
-
-    let message = "";
-    if (input.required && !input.value.trim()) message = field.missing;
-    else if (input.validity.typeMismatch) message = "Enter an email address such as name@example.com.";
-    else if (input.maxLength > 0 && input.value.length > input.maxLength) {
-      message = `Use ${input.maxLength} characters or fewer.`;
-    }
-    if (!message) continue;
-
-    errorCount += 1;
-    input.setAttribute("aria-invalid", "true");
-    error.textContent = `Error: ${message}`;
-    error.hidden = false;
-    const item = document.createElement("li");
-    const link = document.createElement("a");
-    link.href = `#${field.id}`;
-    link.textContent = `${field.label}: ${message}`;
-    link.addEventListener("click", (clickEvent) => {
-      clickEvent.preventDefault();
-      input.focus();
-    });
-    item.append(link);
-    errorList.append(item);
+objForm.addEventListener("submit", async (objEvent) => {
+  objEvent.preventDefault();
+  objSummary.hidden = true; objErrorList.replaceChildren(); objStatus.textContent = "";
+  let intErrors = 0;
+  for (const objField of arrFields) {
+    const objInput = document.getElementById(objField.strId);
+    const objError = document.getElementById(objField.strId + "-error");
+    objInput.removeAttribute("aria-invalid"); objError.hidden = true; objError.textContent = "";
+    let strMessage = "";
+    if (objInput.required && !objInput.value.trim()) strMessage = "Complete this field.";
+    else if (objInput.validity.typeMismatch) strMessage = "Enter an email address such as name@example.com.";
+    else if (objInput.maxLength > 0 && objInput.value.length > objInput.maxLength) strMessage = "Use " + objInput.maxLength + " characters or fewer.";
+    if (!strMessage) continue;
+    intErrors++; objInput.setAttribute("aria-invalid", "true"); objError.textContent = strMessage; objError.hidden = false;
+    const objItem = document.createElement("li"); const objLink = document.createElement("a");
+    objLink.href = "#" + objField.strId; objLink.textContent = objField.strLabel + ": " + strMessage;
+    objLink.addEventListener("click", (objClickEvent) => { objClickEvent.preventDefault(); objInput.focus(); });
+    objItem.append(objLink); objErrorList.append(objItem);
   }
-
-  if (errorCount) {
-    summary.hidden = false;
-    summary.focus();
-  } else {
-    status.textContent = "Your project details passed the demonstration checks. No request was sent or saved, and no consultation was scheduled.";
-  }
+  if (intErrors) { objSummary.hidden = false; objSummary.focus(); return; }
+  if (!objSession.fnToken()) { objStatus.textContent = "Please sign in or create an account using the account link above this form. Your entries will stay here."; objStatus.focus(); return; }
+  objButton.disabled = true; objStatus.textContent = "Sending your inquiry…";
+  try {
+    const objJob = await objSession.fnRequest("/api/jobs", { method: "POST", body: JSON.stringify({
+      strCustomerName: objForm.elements.name.value, strEmail: objForm.elements.email.value,
+      strCompany: objForm.elements.company.value, strService: objForm.elements.service.value, strDetails: objForm.elements.message.value
+    }) });
+    objStatus.textContent = "Inquiry #" + objJob.intJobId + " was saved. Its status is Pending. View it on your dashboard; we will add an expected completion date after review.";
+    objForm.reset(); objStatus.focus();
+  } catch (objError) { objStatus.textContent = objError.message; objStatus.focus(); }
+  finally { objButton.disabled = false; }
 });
+objForm.noValidate = true; objButton.disabled = false;
 
-// Clear stale success feedback when entries change.
-form.addEventListener("input", () => { status.textContent = ""; });
-form.addEventListener("change", () => { status.textContent = ""; });
-// Enable custom validation only once its handler is attached.
-form.noValidate = true;
-document.querySelector("#submit-button").disabled = false;
+// Keep the draft within this browser tab while the customer signs in.
+try {
+  const objDraft = JSON.parse(sessionStorage.getItem("hippo-draft") || "{}");
+  for (const objField of arrFields) if (typeof objDraft[objField.strId] === "string") document.getElementById(objField.strId).value = objDraft[objField.strId];
+} catch { sessionStorage.removeItem("hippo-draft"); }
+objForm.addEventListener("input", () => {
+  const objDraft = Object.fromEntries(arrFields.map((objField) => [objField.strId, document.getElementById(objField.strId).value]));
+  sessionStorage.setItem("hippo-draft", JSON.stringify(objDraft));
+});
+objForm.addEventListener("reset", () => sessionStorage.removeItem("hippo-draft"));

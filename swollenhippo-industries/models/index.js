@@ -1,5 +1,6 @@
 "use strict";
 
+const objFs = require("node:fs");
 const objSequelizePackage = require("sequelize");
 const objUserRole = require("./UserRole");
 const objJobStatus = require("./JobStatus");
@@ -13,7 +14,11 @@ if (!strConnectionString) {
 
 const objSequelize = new objSequelizePackage.Sequelize(strConnectionString, {
   dialect: "mariadb",
-  logging: false
+  logging: false,
+  dialectOptions: process.env.MARIADB_SSL_CA ? { ssl: { ca: objFs.readFileSync(process.env.MARIADB_SSL_CA, "utf8"), rejectUnauthorized: true } } : {},
+  pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
+  retry: { max: 2 },
+  timezone: "+00:00"
 });
 
 const objUser = fnDefineUser(objSequelize, objSequelizePackage.DataTypes);

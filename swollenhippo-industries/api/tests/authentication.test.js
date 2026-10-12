@@ -1,17 +1,17 @@
 "use strict";
 
-const assert = require("node:assert/strict");
-const test = require("node:test");
+const objAssert = require("node:assert/strict");
+const { it: fnTest } = require("mocha");
 const objJwt = require("jsonwebtoken");
 
 process.env.JWT_SECRET = "test-only-secret-with-at-least-64-bytes-0123456789-abcdefghijklmnopqrstuvwxyz";
 process.env.JWT_ISSUER = "SwollenHippo.Api";
 process.env.JWT_AUDIENCE = "SwollenHippo.Client";
 
-const authenticate = require("../middleware/authenticate");
-const requireRole = require("../middleware/requireRole");
+const fnAuthenticate = require("../middleware/authenticate");
+const fnRequireRole = require("../middleware/requireRole");
 
-function makeResponse() {
+function fnMakeResponse() {
   return {
     intStatus: null,
     objBody: null,
@@ -26,7 +26,7 @@ function makeResponse() {
   };
 }
 
-function makeRequest(strToken) {
+function fnMakeRequest(strToken) {
   return {
     objAuthenticatedUser: undefined,
     get(strHeader) {
@@ -35,7 +35,7 @@ function makeRequest(strToken) {
   };
 }
 
-function makeToken(objClaims = {}) {
+function fnMakeToken(objClaims = {}) {
   return objJwt.sign(
     { username: "test-user", role: "Customer", ...objClaims },
     process.env.JWT_SECRET,
@@ -49,59 +49,61 @@ function makeToken(objClaims = {}) {
   );
 }
 
-test("authentication accepts a correctly signed token and sets its claims", () => {
-  const req = makeRequest(makeToken());
-  const res = makeResponse();
+fnTest("authentication accepts a correctly signed token and sets its claims", () => {
+  const objRequest = fnMakeRequest(fnMakeToken());
+  const objResponse = fnMakeResponse();
   let blnNextCalled = false;
 
-  authenticate(req, res, (error) => {
-    assert.equal(error, undefined);
+  fnAuthenticate(objRequest, objResponse, (objError) => {
+    objAssert.equal(objError, undefined);
     blnNextCalled = true;
   });
 
-  assert.equal(blnNextCalled, true);
-  assert.equal(req.objAuthenticatedUser.sub, "1");
-  assert.equal(req.objAuthenticatedUser.role, "Customer");
+  objAssert.equal(blnNextCalled, true);
+  objAssert.equal(objRequest.objAuthenticatedUser.sub, "1");
+  objAssert.equal(objRequest.objAuthenticatedUser.role, "Customer");
 });
 
-test("authentication rejects a token signed with another key", () => {
+fnTest("authentication rejects a token signed with another key", () => {
   const strToken = objJwt.sign({ role: "Admin" }, "different-secret", {
     algorithm: "HS512",
     issuer: process.env.JWT_ISSUER,
     audience: process.env.JWT_AUDIENCE
   });
-  const res = makeResponse();
+  const objResponse = fnMakeResponse();
   let blnNextCalled = false;
 
-  authenticate(makeRequest(strToken), res, () => {
+  fnAuthenticate(fnMakeRequest(strToken), objResponse, () => {
     blnNextCalled = true;
   });
 
-  assert.equal(res.intStatus, 401);
-  assert.equal(blnNextCalled, false);
+  objAssert.equal(objResponse.intStatus, 401);
+  objAssert.equal(blnNextCalled, false);
 });
 
-test("authentication requires a bearer token", () => {
-  const res = makeResponse();
+fnTest("authentication requires a bearer token", () => {
+  const objResponse = fnMakeResponse();
   let blnNextCalled = false;
-  authenticate({ get: () => undefined }, res, () => {
+  fnAuthenticate({ get: () => undefined }, objResponse, () => {
     blnNextCalled = true;
   });
 
-  assert.equal(res.intStatus, 401);
-  assert.equal(blnNextCalled, false);
+  objAssert.equal(objResponse.intStatus, 401);
+  objAssert.equal(blnNextCalled, false);
 });
 
-test("role middleware permits the matching role and denies other roles", () => {
+fnTest("role middleware permits the matching role and denies other roles", () => {
   let blnNextCalled = false;
   const objNext = () => {
     blnNextCalled = true;
   };
 
-  requireRole("Customer")({ objAuthenticatedUser: { role: "Customer" } }, makeResponse(), objNext);
-  assert.equal(blnNextCalled, true);
+  fnRequireRole("Customer")({ objAuthenticatedUser: { role: "Customer" } }, fnMakeResponse(), objNext);
+  objAssert.equal(blnNextCalled, true);
 
-  const res = makeResponse();
-  requireRole("Admin")({ objAuthenticatedUser: { role: "Customer" } }, res, objNext);
-  assert.equal(res.intStatus, 403);
+  const objResponse = fnMakeResponse();
+  blnNextCalled = false;
+  fnRequireRole("Admin")({ objAuthenticatedUser: { role: "Customer" } }, objResponse, objNext);
+  objAssert.equal(objResponse.intStatus, 403);
+  objAssert.equal(blnNextCalled, false);
 });
