@@ -1,0 +1,31 @@
+
+.dashboard-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+.job-counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.job-counts > div { background: var(--surface); padding: 1rem; border-block-start: 3px solid var(--olive); }
+.job-counts dt { color: var(--muted); }
+.job-counts dd { margin: .25rem 0 0; font-size: 1.75rem; font-weight: 700; }
+.job-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; margin-block: 1.5rem; }
+.job-toolbar > div { flex: 1 1 12rem; min-width: 0; }
+.job-toolbar .job-search { flex-basis: 100%; }
+.job-toolbar .hint { margin-block-end: 0; }
+.job-badge { display: inline-block; padding: .25rem .65rem; border: 1px solid var(--border); border-radius: .25rem; font-weight: 700; background: var(--paper); color: var(--olive); }
+.job-badge-InProgress { color: var(--paper); background: var(--olive); border-color: var(--olive); }
+.job-badge-Shipped { color: var(--paper); background: var(--ink); border-color: var(--ink); }
+.job-card .job-details { white-space: pre-wrap; }
+.job-card .job-service { color: var(--muted); font-weight: 700; }
+.job-card details { margin-block-start: 1rem; border-block-start: 1px solid var(--border); }
+.job-card summary, .status-help summary { min-height: 44px; padding: .65rem .25rem; cursor: pointer; overflow-wrap: anywhere; }
+.job-specifications dt, .status-guide dt { font-weight: 700; }
+.job-specifications dd, .status-guide dd { margin: .25rem 0 1rem; }
+.status-guide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.status-help { margin-block-start: 2rem; }
+.secondary-button { background: var(--paper); color: var(--olive); }
+.secondary-button:hover { background: var(--surface); }
+button[aria-disabled="true"] { cursor: wait; }
+#jobs-error { background: var(--surface); border-inline-start: 3px solid var(--error); padding: 1rem; }
+#job-list > div { min-width: 0; }
+.job-card :focus, .job-toolbar :focus, #account-form :focus { outline: 3px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 3px var(--paper); }
+@media (max-width: 40rem) { .job-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .status-guide { grid-template-columns: 1fr; } }
+@media (forced-colors: active) { :focus { outline-color: Highlight; box-shadow: none; } .job-badge { border-color: CanvasText; } }
+.job-counts { margin-top: 1.5rem; }
+.job-counts > div { border: 1px solid var(--border); border-top: 4px solid var(--olive); }
