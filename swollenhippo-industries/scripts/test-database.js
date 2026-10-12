@@ -16,7 +16,9 @@ async function fnTestDatabase() {
     await objJob.update({ strStatus: "InProgress", dteExpectedCompletion: "2026-10-20" }, { transaction: objTransaction });
     const objReloaded = await objDatabase.Job.findByPk(objJob.intJobId, { transaction: objTransaction });
     objAssert.equal(objReloaded.dteExpectedCompletion, "2026-10-20"); objAssert.equal(objReloaded.AssignedUserId, objUser.Id);
-    console.log("Live MariaDB create/read/update passed; test records will be rolled back.");
+    await objJob.destroy({ transaction: objTransaction });
+    objAssert.equal(await objDatabase.Job.findByPk(objJob.intJobId, { transaction: objTransaction }), null);
+    console.log("Live MariaDB create/read/update/delete passed; test records will be rolled back.");
   } finally { if (objTransaction) await objTransaction.rollback(); await objDatabase.objSequelize.close(); }
 }
 fnTestDatabase().catch((objError) => { console.error(objError.message); process.exitCode = 1; });

@@ -12,6 +12,7 @@ function fnTestDatabase() {
     { Id: 3, Username: "other-customer", PasswordHash: objBcrypt.hashSync("other-password", 4), Role: "Customer" }
   ];
   const arrJobs = [];
+  let intNextJobId = 1;
   return {
     arrUsers, arrJobs, UserRole: require("../../models/UserRole"), JobStatus: require("../../models/JobStatus"),
     User: {
@@ -24,8 +25,9 @@ function fnTestDatabase() {
     },
     Job: {
       async create(objValues) {
-        const objJob = { intJobId: arrJobs.length + 1, dteCreated: new Date().toISOString(), ...objValues,
-          async save() { return this; } }; arrJobs.push(objJob); return objJob;
+        const objJob = { intJobId: intNextJobId++, dteCreated: new Date().toISOString(), ...objValues,
+          async save() { return this; },
+          async destroy() { arrJobs.splice(arrJobs.indexOf(this), 1); } }; arrJobs.push(objJob); return objJob;
       },
       async findByPk(intId) { return arrJobs.find((objJob) => objJob.intJobId === intId) || null; },
       async findAll(objOptions) {

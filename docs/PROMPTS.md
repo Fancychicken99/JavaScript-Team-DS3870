@@ -54,3 +54,44 @@ User response:
 - Treat automated WCAG checks as evidence only; retain a manual accessibility verification checklist rather than claiming certification.
 
 These are the assistant's engineering reasons, not a claim about each teammate's motivation or contribution. The team should add its own prompt-selection explanations before submission.
+
+
+## Follow-up request for CRUD completion and visual refinement
+
+User request:
+
+> You are an expert full-stack developer acting as a junior software engineering assistant. Your task is to implement, refactor, and finalize a Node.js/Express and MariaDB web application for a team business project, aligning with industry standards and the specific learning objectives of this course.
+>
+> Approach this task with absolute precision, directness, and adherence to the specifications below.
+>
+> ### 1. Architectural & Stack Specifications
+> - Backend Framework: Use Node.js with Express exclusively.
+> - Database Layer: MariaDB storage with clean initialization/migration SQL scripts included.
+> - Authentication: Implement a secure authentication method (e.g., session IDs or JSON Web Tokens) to protect administrative status updates.
+> - Core Functionality: A complete CRUD application allowing customers to submit job inquiries, view job tracking status ('Pending', 'InProgress', 'Complete', 'Shipped') with expected completion dates, and allow authenticated administrators to update them.
+>
+> ### 2. Coding Conventions & Code Quality
+> - Hungarian Notation: Strictly name all variables using Hungarian notation with clear, contextual meaning (e.g., strCustomerName, intJobId, objDatabasePool, blnIsAuthenticated).
+> - Readability Over Efficiency: Prioritize clean, easy-to-read, and maintainable code over micro-optimizations.
+> - Comments: Add clear code comments explaining any obscure or difficult programming logic.
+> - Granular Changes: Apply requested changes and bug fixes at the smallest level available to avoid unnecessary regressions.
+>
+> ### 3. UI, UX, Branding, & Accessibility (WCAG 2.2)
+> - **Branding (logo):** Make the existing Swollen Hippo logo significantly larger and a focal point of the application's visual hierarchy. Ensure it is prominently displayed in the header and on key pages. Properly reference 'Swollenhippo_logo.png' and the favicon.
+> - **Visual Appeal & Engagement:**
+>     - Integrate a sophisticated implementation of Bootstrap to structure the application.
+>     - Utilize a strictly controlled, expert-level Earth Tone color palette (browns, creams, olives) as the foundation.
+>     - Apply advanced CSS techniques such as subtle backgrounds (textures or patterns in Earth Tones), CSS shaders (applied responsibly for effects that do not use prohibited gradients or glowing), well-defined content boxes with visible borders or padding, and clean typography.
+>     - **Forbidden Elements:** Absolutely NO glowing effects, gradients, or AI-styled visuals that deviate from the requested non-digital, hand-drawn aesthetic.
+> - **Accessibility:** Ensure 100% WCAG 2.2 compliance, including full keyboard-only navigability across all interactive elements, visible focus indicators, and explicit form labels.
+>
+> ### 4. Testing & Iteration Protocol
+> - Automated Testing: Write and include an automated test suite (using Jest or Mocha/Supertest) covering core API endpoints and closest neighboring features.
+> - Iteration: If tests fail, analyze the failure directly, apply precise fixes at the smallest level, and re-test until green.
+>
+> ### 5. Pedagogical Context & Deliverable Awareness
+> Remember that this project is designed to bridge business acumen with agentic software engineering. As an AI assistant, you are supporting a team completing a resume-worthy CRUD application emphasizing user experience, secure authentication research, version-controlled collaboration, and structured prompt documentation.
+>
+> Please generate the complete, production-ready code files—including server.js, database setup scripts, authentication middleware, updated frontend scripts (main.js), CSS/SASS files incorporating the advanced styling, and dashboard views—needed to unify and complete this application.
+
+Assistant implementation rationale: retain the working authentication/inquiry foundation; add the missing administrative edit/delete operations using shared field validation; preserve the team's schema and dashboard helper work; make branding visibly larger through CSS and layout changes; provide explicit additive MariaDB SQL; and test permission boundaries, browser flows, focus recovery, and deletion cancellation. The user should add their own explanation of why they chose this prompt. Automated accessibility checks do not establish complete WCAG conformance; live MariaDB remains deferred by the user's earlier instruction.

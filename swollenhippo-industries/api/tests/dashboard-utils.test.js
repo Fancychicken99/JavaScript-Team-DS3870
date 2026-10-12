@@ -1,7 +1,7 @@
 "use strict";
-const fnTest = require("node:test");
+const { it: fnTest } = require("mocha");
 const objAssert = require("node:assert/strict");
-const objUtils = require("../public/js/dashboard-utils");
+const objUtils = require("../../public/js/dashboard-utils");
 const arrJobs = [
   { intJobId: 1, strCustomerName: "Test customer", strService: "design", strDetails: "Enclosure", strStatus: "Pending", dteCreated: "2026-10-01", dteExpectedCompletion: null },
   { intJobId: 2, strCustomerName: "Test customer", strService: "electronics", strDetails: "Sensor PCB", strStatus: "InProgress", dteCreated: "2026-10-02", dteExpectedCompletion: "2026-10-20" },

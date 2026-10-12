@@ -38,3 +38,10 @@ Statuses: Pending, InProgress, Complete, Shipped. A null completion date means T
 400 means invalid input, 401 means authentication required/expired, 403 means unauthorized role, 404 means missing resource, 409 means duplicate username, 413 means an oversized body, and 429 means rate limited. Database failures return a generic 500 and never a success message.
 
 The database is queried on every protected request to enforce current account existence and role. Password hashes and user records are never included in job responses. Database operations use Sequelize parameterization over the MariaDB driver.
+
+
+## Complete inquiry CRUD
+
+PATCH /api/jobs/:id requires an Admin token and the complete inquiry body shown above. Only customer name, email, company, service, details, and the legacy title are updated. Ownership, status, and expected completion are never accepted by this endpoint. Use the separate status endpoint for scheduling/status changes.
+
+DELETE /api/jobs/:id requires an Admin token and permanently removes that job. The dashboard asks for explicit confirmation and offers cancellation before making the request. Missing/deleted records return 404; customer accounts cannot edit or delete any job, including their own. Deletion failures never return success.

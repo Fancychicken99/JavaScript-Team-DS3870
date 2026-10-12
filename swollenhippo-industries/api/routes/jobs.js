@@ -2,11 +2,7 @@
 const objExpress = require("express");
 const fnAuthenticate = require("../middleware/authenticate");
 const fnRequireRole = require("../middleware/requireRole");
-const arrServices = ["manufacturing", "electronics", "software", "design", "multidisciplinary"];
-function fnText(objBody, strKey, intMax, blnRequired = true) {
-  const strValue = objBody[strKey];
-  return typeof strValue === "string" && strValue.trim().length <= intMax && (!blnRequired || strValue.trim().length > 0);
-}
+const { fnValidInquiry, fnInquiryValues } = require("../job-input");
 function fnValidDate(strDate) {
   return typeof strDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(strDate) &&
     Number(strDate.slice(0, 4)) >= 1000 && Number.isFinite(Date.parse(strDate)) && new Date(strDate).toISOString().slice(0, 10) === strDate;
@@ -23,14 +19,11 @@ module.exports = (objDatabase) => {
   });
   objRouter.post("/", fnRequireRole(objDatabase.UserRole.Customer), async (objRequest, objResponse) => {
     const objBody = objRequest.body || {};
-    if (!fnText(objBody, "strCustomerName", 100) || !fnText(objBody, "strEmail", 254) ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(objBody.strEmail) || !fnText(objBody, "strDetails", 2000) ||
-      !arrServices.includes(objBody.strService) || (objBody.strCompany !== undefined && !fnText(objBody, "strCompany", 150, false))) {
+    if (!fnValidInquiry(objBody)) {
       return objResponse.status(400).json({ message: "Provide your name, a valid email, service, and project details within the displayed limits." });
     }
     const objJob = await objDatabase.Job.create({
-      Title: objBody.strService, strCustomerName: objBody.strCustomerName.trim(), strEmail: objBody.strEmail.trim(),
-      strCompany: (objBody.strCompany || "").trim(), strService: objBody.strService, strDetails: objBody.strDetails.trim(),
+      ...fnInquiryValues(objBody),
       strStatus: objDatabase.JobStatus.Pending, dteExpectedCompletion: null,
       AssignedUserId: Number(objRequest.objAuthenticatedUser.sub)
     });
@@ -56,6 +49,28 @@ module.exports = (objDatabase) => {
     if (dteExpectedCompletion !== undefined) objJob.dteExpectedCompletion = dteExpectedCompletion;
     await objJob.save();
     return objResponse.json(objJob);
+  });
+  objRouter.patch("/:id", fnRequireRole(objDatabase.UserRole.Admin), async (objRequest, objResponse) => {
+    const intJobId = Number(objRequest.params.id);
+    const objBody = objRequest.body || {};
+    if (!Number.isSafeInteger(intJobId) || intJobId < 1 || !fnValidInquiry(objBody)) {
+      return objResponse.status(400).json({ message: "Provide a valid job ID and complete inquiry details within the displayed limits." });
+    }
+    const objJob = await objDatabase.Job.findByPk(intJobId);
+    if (!objJob) return objResponse.status(404).json({ message: "Job not found." });
+    Object.assign(objJob, fnInquiryValues(objBody));
+    await objJob.save();
+    return objResponse.json(objJob);
+  });
+  objRouter.delete("/:id", fnRequireRole(objDatabase.UserRole.Admin), async (objRequest, objResponse) => {
+    const intJobId = Number(objRequest.params.id);
+    if (!Number.isSafeInteger(intJobId) || intJobId < 1) {
+      return objResponse.status(400).json({ message: "Job ID must be a positive integer." });
+    }
+    const objJob = await objDatabase.Job.findByPk(intJobId);
+    if (!objJob) return objResponse.status(404).json({ message: "Job not found." });
+    await objJob.destroy();
+    return objResponse.json({ message: "Job deleted.", intJobId });
   });
   return objRouter;
 };

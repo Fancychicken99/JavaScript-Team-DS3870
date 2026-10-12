@@ -1,6 +1,6 @@
 "use strict";
 
-function getJwtConfig() {
+function fnGetJwtConfig() {
   const strJwtSecret = process.env.JWT_SECRET;
   const strJwtIssuer = process.env.JWT_ISSUER;
   const strJwtAudience = process.env.JWT_AUDIENCE;
@@ -19,4 +19,4 @@ function getJwtConfig() {
   };
 }
 
-module.exports = { getJwtConfig };
+module.exports = { fnGetJwtConfig };

@@ -3,7 +3,7 @@ const objExpress = require("express");
 const fnHelmet = require("helmet");
 const objPath = require("node:path");
 const { rateLimit: fnRateLimit } = require("express-rate-limit");
-const { getJwtConfig: fnGetJwtConfig } = require("./api/config");
+const { fnGetJwtConfig } = require("./api/config");
 
 function fnCreateApp(objDatabase = require("./models")) {
   const objApp = objExpress();

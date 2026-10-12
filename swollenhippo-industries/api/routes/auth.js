@@ -3,7 +3,7 @@ const objExpress = require("express");
 const objBcrypt = require("bcryptjs");
 const objJwt = require("jsonwebtoken");
 const { UniqueConstraintError: clsUniqueConstraintError } = require("sequelize");
-const { getJwtConfig: fnGetJwtConfig } = require("../config");
+const { fnGetJwtConfig } = require("../config");
 const strDummyHash = objBcrypt.hashSync("unused-dummy-password", 12);
 module.exports = (objDatabase) => {
   const objRouter = objExpress.Router();

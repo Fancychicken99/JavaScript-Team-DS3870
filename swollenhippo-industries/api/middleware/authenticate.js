@@ -1,6 +1,6 @@
 "use strict";
 const objJwt = require("jsonwebtoken");
-const { getJwtConfig: fnGetJwtConfig } = require("../config");
+const { fnGetJwtConfig } = require("../config");
 module.exports = function fnAuthenticate(objRequest, objResponse, fnNext) {
   const arrParts = (objRequest.get("authorization") || "").split(" ");
   if (arrParts.length !== 2 || arrParts[0] !== "Bearer") return objResponse.status(401).json({ message: "Please sign in." });

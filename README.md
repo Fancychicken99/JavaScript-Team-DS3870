@@ -76,3 +76,12 @@ Merge/review the final work into the team's submission branch, preserve each tea
 See swollenhippo-industries/api/README.md for the request/response contract.
 
 Implementation references: [Express security guidance](https://expressjs.com/en/advanced/best-practice-security/), [Sequelize migrations](https://sequelize.org/docs/v6/other-topics/migrations/), and [Bootstrap accessibility](https://getbootstrap.com/docs/5.3/getting-started/accessibility/).
+
+
+## Current CRUD and visual update
+
+Administrators can now edit inquiry details and permanently delete jobs after confirmation. Customers retain private create/read access; scheduling, editing, and deletion are administrator-only. The dashboard includes status totals and search/filter/sort controls for the current page.
+
+The header logo is approximately 200 pixels wide on desktop and 148 pixels on narrow screens, with responsive Bootstrap layouts, bordered content panels, serif headings, and a local SVG paper pattern. The original logo artwork is preserved.
+
+For explicit SQL provisioning, use swollenhippo-industries/database/001-initialize.sql followed by 002-upgrade-inquiries.sql against the selected MariaDB database. See database/README.md for the alternative to npm run db:sync. The physical Users/Jobs names and legacy Id/Status/CreatedAt columns remain compatible with existing data.

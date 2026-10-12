@@ -27,3 +27,5 @@ button[aria-disabled="true"] { cursor: wait; }
 .job-card :focus, .job-toolbar :focus, #account-form :focus { outline: 3px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 3px var(--paper); }
 @media (max-width: 40rem) { .job-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .status-guide { grid-template-columns: 1fr; } }
 @media (forced-colors: active) { :focus { outline-color: Highlight; box-shadow: none; } .job-badge { border-color: CanvasText; } }
+.job-counts { margin-top: 1.5rem; }
+.job-counts > div { border: 1px solid var(--border); border-top: 4px solid var(--olive); }
