@@ -9,6 +9,7 @@ function fnCreateApp(objDatabase = require("./models")) {
   const objApp = objExpress();
   const blnProduction = process.env.NODE_ENV === "production";
   objApp.disable("x-powered-by");
+  objApp.set("trust proxy", "loopback");
   objApp.use(fnHelmet({
     strictTransportSecurity: blnProduction ? undefined : false,
     contentSecurityPolicy: { directives: {

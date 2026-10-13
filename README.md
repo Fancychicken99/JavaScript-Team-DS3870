@@ -59,13 +59,13 @@ npm audit
 
 Mocha/Supertest tests exercise actual Express endpoints using an isolated database adapter. Browser tests run the real frontend and Express routes, checking registration, login, draft restoration, inquiry saving, customer tracking, administrator updates, input escaping, keyboard skip navigation, 320-pixel reflow, and axe WCAG checks. Screenshots are written to ignored test-results. No test credentials are used by production code.
 
-Live MariaDB verification is separate and opt-in. First apply the schema to a disposable database, then set TEST_MARIADB_URL to that database and run npm run test:database. This tests real driver/model create/read/update operations inside a rolled-back transaction. The current implementation was developed without an active database supplied, so live database connectivity and migration execution must be verified when one is configured.
+Live MariaDB verification is separate and opt-in. First apply the schema to a disposable database, then set TEST_MARIADB_URL to that database and run npm run test:database. This tests real driver/model create/read/update operations inside a rolled-back transaction. The team subsequently connected MariaDB on its cloud VM. Database authentication and working-site results were reported during deployment; the isolated automated tests do not replace a recorded live persistence and customer-isolation check.
 
 Automated accessibility checks are evidence, not certification of full WCAG 2.2 compliance. Before submission, manually check every interaction using only a keyboard, screen-reader labels/announcements, focus after errors and navigation, 200%/400% zoom, and browser/password-manager behavior. The original team logo is preserved as supplied.
 
 ## Deployment
 
-Set NODE_ENV=production, provide database and JWT configuration through the host's secret management, and serve through HTTPS. The default bind address is 127.0.0.1; set HOST=0.0.0.0 only when the deployment requires it. Do not expose MariaDB publicly. This is a single-process application with in-memory rate-limit counters; multiple instances require a shared rate-limit store. Proxy headers are not trusted by default, so a reverse proxy may cause all clients to share a rate-limit bucket until a trusted-proxy configuration is deliberately added.
+Set NODE_ENV=production, provide database and JWT configuration through the host's secret management, and serve through HTTPS. The default bind address is 127.0.0.1; set HOST=0.0.0.0 only when the deployment requires it. Do not expose MariaDB publicly. This is a single-process application with in-memory rate-limit counters; multiple instances require a shared rate-limit store. Express trusts the local loopback reverse proxy. The supplied Nginx configuration overwrites forwarded client addresses; reassess this trust boundary if the deployment topology changes.
 
 The browser keeps the bearer token in sessionStorage for the current tab; it is not persisted in localStorage. Signing out clears the browser token. Tokens expire after two hours; there is no server-side per-token logout revocation or password-reset flow. Account deletion/role changes are rechecked from the database on protected requests. Keep HTTPS and the restrictive content security policy in place.
 
@@ -85,3 +85,9 @@ Administrators can now edit inquiry details and permanently delete jobs after co
 The header logo is approximately 200 pixels wide on desktop and 148 pixels on narrow screens, with responsive Bootstrap layouts, bordered content panels, serif headings, and a local SVG paper pattern. The original logo artwork is preserved.
 
 For explicit SQL provisioning, use swollenhippo-industries/database/001-initialize.sql followed by 002-upgrade-inquiries.sql against the selected MariaDB database. See database/README.md for the alternative to npm run db:sync. The physical Users/Jobs names and legacy Id/Status/CreatedAt columns remain compatible with existing data.
+
+## Deployed application and handoff
+
+Website: https://swollenhippopotamusindustries.duckdns.org/
+
+See [deployment and operations](docs/DEPLOYMENT.md) for Debian, Nginx reverse proxy, systemd, Snap Certbot, backups, and all five browser targets. See [submission evidence](docs/SUBMISSION.md) for verified results and remaining checks. The Google Safe Browsing warning remains unresolved in the available evidence; HTTPS and functional test success do not clear that classification.

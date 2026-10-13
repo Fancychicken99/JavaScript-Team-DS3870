@@ -1,0 +1,22 @@
+[Unit]
+Description=SwollenHippo Industries website
+After=network.target mariadb.service
+Requires=mariadb.service
+
+[Service]
+Type=simple
+User=swollenhippo
+Group=swollenhippo
+WorkingDirectory=/opt/swollenhippo/swollenhippo-industries
+ExecStart=/usr/local/bin/node --env-file=/opt/swollenhippo/swollenhippo-industries/.env /opt/swollenhippo/swollenhippo-industries/server.js
+Environment=NODE_ENV=production
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

@@ -95,3 +95,18 @@ User request:
 > Please generate the complete, production-ready code files—including server.js, database setup scripts, authentication middleware, updated frontend scripts (main.js), CSS/SASS files incorporating the advanced styling, and dashboard views—needed to unify and complete this application.
 
 Assistant implementation rationale: retain the working authentication/inquiry foundation; add the missing administrative edit/delete operations using shared field validation; preserve the team's schema and dashboard helper work; make branding visibly larger through CSS and layout changes; provide explicit additive MariaDB SQL; and test permission boundaries, browser flows, focus recovery, and deletion cancellation. The user should add their own explanation of why they chose this prompt. Automated accessibility checks do not establish complete WCAG conformance; live MariaDB remains deferred by the user's earlier instruction.
+
+## Deployment and cross-browser follow-up (October 13, 2026)
+
+Actual user prompts included:
+
+- "can we include playwright testing as well"
+- "I would like to check all popular browsers via playwright testing aswell can we include that in step 3b also"
+- "can you just create an entire pasteable scripts/test-browser.js"
+- "I have been specifically instructed that a reverse proxy is necessary is that true here"
+- "okay go ahead and check the repository and tell me where I need to go from here"
+- "can you do all of this for me"
+
+Assistant rationale: retain the existing isolated workflow while selecting one browser per run to reduce memory use; store screenshots by browser; replace a timing-sensitive immediate input read with Playwright's retrying assertion without weakening the expected value; trust only the local Nginx proxy; preserve database credentials outside Git; and record deployment evidence separately from unverified manual checks. Chromium, Firefox, WebKit, Chrome, and Edge passes were supplied in VM transcripts. Database authentication, HTTPS, renewal simulation, and service restart evidence were also supplied.
+
+This is a selected record, not an export of every prompt. The team still needs to attach its original conversations (with secrets redacted), its own prompt-selection explanations, and authentic teammate contribution/evaluation records. Do not include passwords exposed during troubleshooting. The assistant cannot author personal evaluations or invent motivations for teammates.
